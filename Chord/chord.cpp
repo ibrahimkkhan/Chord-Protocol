@@ -1,3 +1,7 @@
+
+
+#include "hash.h"
+#include <openssl/evp.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -85,6 +89,34 @@ class Node {
       }
     }
 };
+uint8_t *hash(const char *lookup) {
+	uint8_t checksum[40];
+	uint8_t *ret;
+
+  struct sha1sum_ctx *ctx = sha1sum_create(NULL, 0);
+	if (!ctx) {
+		fprintf(stderr, "Error creating checksum\n");
+		return 0;
+	}
+
+
+	int error = sha1sum_finish(ctx, (const uint8_t*)lookup, strlen(lookup), checksum);
+	if (!error) {
+		printf("%s ", lookup);
+		for(size_t i = 0; i < 20; ++i) {
+			printf("%02x", checksum[i]);
+		}
+		putchar('\n');
+	}
+
+
+	sha1sum_reset(ctx);
+    sha1sum_destroy(ctx);
+
+    ret = &checksum[0];
+	return ret;
+}
+
 
 
 error_t chord_parser(int key, char *arg, struct argp_state *state)
@@ -107,12 +139,12 @@ error_t chord_parser(int key, char *arg, struct argp_state *state)
     }
     break;
 
-  case 'ja':
+  case 27233:
         check++;
         inet_pton(AF_INET, arg, &(args->peer_iport.sin_addr));
     break;
 
-  case 'jp':
+  case 27248:
         check++;
         args->peer_iport.sin_port = atoi(arg);
         if (args->peer_iport.sin_port <= 1024)
@@ -121,21 +153,21 @@ error_t chord_parser(int key, char *arg, struct argp_state *state)
         } 
     break;
 
-  case 'ts':
+  case 29811:
     args->ts = atoi(arg);
     if(args->ts < 0)
     {
       argp_error(state,"Negative number for time stabalize");
     }
     break;
-  case 'tff':
+  case 7628390:
     args->tff = atoi(arg);
     if(args->tff < 0)
     {
       argp_error(state,"Negative number for time fix finger");
     }
     break;
-  case 'tcp':
+  case 7627632:
     args->tcp = atoi(arg);
     if(args->tcp < 0)
     {
@@ -165,12 +197,12 @@ chord_arguments chord_parseopt(int argc, char *argv[])
   struct argp_option options[] = {
       {"myaddr", 'a', "myaddr", 0, "The IP address of the current node ", 0},
       {"myport", 'p', "myport", 0, "The port of the current node ", 0},
-      {"jaddr", 'ja', "jaddr", 0, "The IP address of the peer whose ring is joined ", 0},
-      {"jport", 'jp', "jport", 0, "The port of the peer whose ring is joined" , 0},
+      {"jaddr", 27233, "jaddr", 0, "The IP address of the peer whose ring is joined ", 0},
+      {"jport", 27248, "jport", 0, "The port of the peer whose ring is joined" , 0},
 
-      {"ts", 'ts', "ts", 0, "time between invocations of stabilize", 0},
-      {"tff", 'tff', "tff", 0, "time between invocations of fix fingers", 0},
-      {"tcp", 'tcp', "tcp", 0, "time between invocations of check predecessor", 0},
+      {"ts", 29811, "ts", 0, "time between invocations of stabilize", 0},
+      {"tff", 7628390, "tff", 0, "time between invocations of fix fingers", 0},
+      {"tcp", 7627632, "tcp", 0, "time between invocations of check predecessor", 0},
       {"r", 'r', "r", 0, "number of successors maintained", 0},
       { "i", 'i', "i", 0, "the identifier (ID) assigned to the Chord client", 0},
       {0}};
@@ -222,11 +254,6 @@ int main(int argc, char *argv[])
         printf("join ring \n");
         //join existing ring
     }
-
-}
-
-void create_ring(Node *node){
-  return;
-}
-  
-
+    
+    hash("Ibrahim");
+};
