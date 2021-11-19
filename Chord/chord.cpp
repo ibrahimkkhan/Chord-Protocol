@@ -1,5 +1,3 @@
-
-
 #include "hash.h"
 #include <openssl/evp.h>
 #include <stdio.h>
@@ -35,11 +33,11 @@ struct chord_arguments
 
 };
 
-class Node {
+class Local_Node {
 
   public:
-    Node* successor;
-    Node* predecessor;
+    Local_Node* successor;
+    Local_Node* predecessor;
     struct sockaddr_in my_iport; //self ip and port, used in create to make new ring
     struct sockaddr_in peer_iport; //Chord client will join this node’s ring
     
@@ -49,8 +47,9 @@ class Node {
     int r_succ; //number of successors maintained by the Chord client
     int id_opt;
     int sock_fd;
+    // string node_id;
     
-    Node(struct sockaddr_in m_port, struct sockaddr_in p_port, int ts, int tff, int t_cp, int r_s, int id_o){
+    Local_Node(struct sockaddr_in m_port, struct sockaddr_in p_port, int ts, int tff, int t_cp, int r_s, int id_o){
       my_iport.sin_port = htons(m_port.sin_port);
       my_iport.sin_addr.s_addr = INADDR_ANY;
       my_iport.sin_family = AF_INET;
@@ -228,32 +227,58 @@ chord_arguments chord_parseopt(int argc, char *argv[])
     return args;
 }
 
+
 int main(int argc, char *argv[])
 {
 
-  // chord_arguments client = client_parseopt(argc, argv);
-  // int sock = socket(AF_INET, SOCK_DGRAM, 0);
-  // struct sockaddr_in serv_addr = client.ip_port;
-  int port = 4000;
-  struct sockaddr_in servaddr;
-  servaddr.sin_family = AF_INET;
-  servaddr.sin_addr.s_addr = INADDR_ANY;
-  servaddr.sin_port = htons(port);
+    // chord_arguments client = client_parseopt(argc, argv);
+    // int sock = socket(AF_INET, SOCK_DGRAM, 0);
+    // struct sockaddr_in serv_addr = client.ip_port;
+    //   int port = 4000;
+    //   struct sockaddr_in servaddr;
+    //   servaddr.sin_family = AF_INET;
+    //   servaddr.sin_addr.s_addr = INADDR_ANY;
+    //   servaddr.sin_port = htons(port);
 
-  Node node(servaddr, servaddr, 0, 0, 0, 0, 0);
-  chord_arguments chord = chord_parseopt(argc, argv);
-  printf("Got %s port %d with ts=%d tff=%d tcp=%d r=%d \n", inet_ntoa(chord.my_iport.sin_addr),chord.my_iport.sin_port, chord.ts, chord.tff , chord.tcp, chord.r_succ);
-  printf("Got %s port %d for peer \n", inet_ntoa(chord.peer_iport.sin_addr),chord.peer_iport.sin_port);
+    // GOOGLE_PROTOBUF_VERIFY_VERSION;
 
-  if(check == 0)
+
+    chord_arguments chord = chord_parseopt(argc, argv);
+    printf("Got %s port %d with ts=%d tff=%d tcp=%d r=%d \n", inet_ntoa(chord.my_iport.sin_addr), chord.my_iport.sin_port, chord.ts, chord.tff, chord.tcp, chord.r_succ);
+    printf("Got %s port %d for peer \n", inet_ntoa(chord.peer_iport.sin_addr), chord.peer_iport.sin_port);
+
+    Local_Node node(chord.my_iport, chord.peer_iport, chord.ts, chord.tff, chord.tcp, chord.r_succ, chord.id_opt);
+    if (check == 0)
     {
-        printf("create ring \n");
+        node.node_socket_initialize();
+        //! Nistha to add hashing here
+        //! 
+
+        // node.
+
         //Create a new ring
     }
-    else if (check == 2){
+    else if (check == 2)
+    {
+        node.node_socket_initialize();
         printf("join ring \n");
         //join existing ring
     }
-    
-    hash("Ibrahim");
-};
+
+    // string input;
+
+    // while(1){
+    //     cout << "send or recv: ";
+    //     getline(cin, input);
+
+    //     if(input.compare("send") == 0){
+    //         string myString = "SAARA ZAMAANA HASEENO KA DIWAANA";
+    //         std::vector<uint8_t> myVector(myString.begin(), myString.end());
+    //         uint8_t *p = &myVector[0];
+    //         node.send_call(p);
+    //     }else if (input.compare("recv") == 0){
+    //         node.recv_call();
+    //     }
+        
+    // }
+}
