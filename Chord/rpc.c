@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "rpc.pb-c.h"
+#include "./rpc.pb-c.h"
 
 bool invert(bool v)
 {

@@ -18,7 +18,7 @@ message Return {
   optional bytes value = 2;
 }
 
-message FindSuccessorArgs { required bytes id = 1; }
+message FindSuccessorArgs {required bytes id = 1; }
 
 message FindSuccessorRet { required Node node = 1; }
 
@@ -36,4 +36,4 @@ message GetPredecessorRet { optional Node node = 1; }
 
 message GetSuccessorListArgs {}
 
-message GetSuccessorListRet { repeated Node successors = 1; }
+message GetSuccessorListRet {repeated Node successors = 1; }
